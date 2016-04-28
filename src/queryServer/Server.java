@@ -1,8 +1,9 @@
 package queryServer;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
-public class Server implements IServer {
+public class Server implements IServer, Serializable {
 	public String address;
 	public int port;
 	
