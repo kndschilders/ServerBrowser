@@ -1,13 +1,21 @@
 package gameServer;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import queryServer.IServerList;
 
 public class GameServer {
 	private static final int PORT = 420;
 	private static final String IP = "localhost";
+	static final String BINDINGNAME = "serverList";
+	
 	private Registry registry;
+	private IServerList serverList;
+	
+	private static final String MYIP = "192.168.1.1";
+	private static final int MYPORT = 1337;
 	
 	public GameServer() {
 		//Try to get the registry
@@ -17,6 +25,22 @@ public class GameServer {
 		} catch (RemoteException re) {
 			System.out.println("GameServer: RemoteException: " + re.getMessage());
             registry = null;
+		}
+		
+		if(registry != null) {
+			try {
+				serverList = (IServerList) registry.lookup(BINDINGNAME);
+			} catch (RemoteException re) {
+				System.out.println("GameServer: RemoteException: " + re.getMessage());
+                serverList = null;
+			} catch (NotBoundException nbe) {
+				System.out.println("GameServer: NotBoundException: " + nbe.getMessage());
+				serverList = null;
+			}
+		}
+		
+		if(serverList != null) {
+			serverList.addServer(MYIP, MYPORT);
 		}
 	}
 	
